@@ -22,5 +22,18 @@ printf("Number of tasks=%d\n", numtasks);
 sbuf = (int *)malloc(numtasks * sizeof(int) * 2);
 srand(time(NULL));
 for(i=0; i < numtasks * 2; i++) sbuf[i] = rand() % 10000;
+MPI_Scatter(sbuf, 2, MPI_INT, rbuf, 2, MPI_INT, 0, MPI_COMM_WORLD);
 
+gcdv = gcd(rbuf[0], rbuf[1]);
+printf("My rank=%d r1=%d r2=%d GCD=%d\n", rank, rbuf[0], rbuf[1], gcdv);
+MPI_Reduce(&gcdv, &result, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+if(rank == 0) {
+
+printf("Sum of GCDs is %d\n", result);
+
+}
+MPI_Finalize();
+return 0;
+
+}
 }
